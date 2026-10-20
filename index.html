@@ -1,53 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PixelPilot</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #101323;
-      color: white;
-      text-align: center;
-    }
-    header {
-      padding: 24px;
-      background: #191f38;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    main {
-      padding: 80px 20px;
-    }
-    h1 {
-      font-size: 44px;
-      color: #8b9cff;
-    }
-    p {
-      font-size: 18px;
-      color: #d1d5e5;
-    }
-    button {
-      padding: 14px 25px;
-      background: #6878ff;
-      color: white;
-      border: 0;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelPilot AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#f5f7ff}
+.app{display:flex;min-height:100vh}
+.sidebar{width:235px;background:#11182b;padding:24px 16px;border-right:1px solid #27304a}
+.logo{font-size:23px;font-weight:bold;margin-bottom:35px}
+.logo span{color:#9b8cff}
+.nav{display:block;width:100%;padding:13px;margin:7px 0;border:0;border-radius:10px;background:transparent;color:#b9c3df;text-align:left;font-size:15px;cursor:pointer}
+.nav.active,.nav:hover{background:#292448;color:white}
+.note{margin-top:35px;color:#8f9bb8;font-size:12px;line-height:1.6}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{padding:20px 25px;border-bottom:1px solid #27304a;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.status{color:#8ee6bc;font-size:13px}
+.content{width:min(850px,100%);margin:auto;padding:28px 22px;flex:1;display:flex;flex-direction:column}
+h1{font-size:30px;margin:10px 0}
+.subtitle{color:#a8b3cf;line-height:1.6}
+.welcome{margin:auto 0 20px}
+.spark{font-size:35px}
+.messages{display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.msg{padding:14px 16px;border-radius:15px;max-width:90%;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.bot{background:#171f35;border:1px solid #293451;align-self:flex-start}
+.user{background:#6654df;align-self:flex-end}
+.composer{display:flex;gap:10px;padding:10px;background:#151d31;border:1px solid #303b59;border-radius:15px}
+input{flex:1;min-width:0;background:transparent;border:0;outline:none;color:white;font-size:15px;padding:10px}
+button.send{background:#7664f5;color:white;border:0;border-radius:10px;padding:0 19px;font-weight:bold;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid #b5aaff;outline-offset:3px}
+.hint{text-align:center;color:#8995b1;font-size:12px;margin:12px 0}
+@media(max-width:650px){.sidebar{width:76px;padding:18px 8px}.logo{font-size:0;text-align:center}.logo:first-letter{font-size:25px}.nav{text-align:center;font-size:0;padding:14px 2px}.nav::first-letter{font-size:20px}.note{display:none}.topbar{padding:16px}.content{padding:20px 14px}h1{font-size:25px}}
+</style>
 </head>
 <body>
-  <header>🚀 PixelPilot</header>
-  <main>
-    <h1>Your Ideas. Your Universe.</h1>
-    <p>Welcome to PixelPilot — where creativity takes flight.</p>
-    <button onclick="alert('Welcome to PixelPilot!')">
-      Get Started
-    </button>
-  </main>
+<div class="app">
+<aside class="sidebar">
+<div class="logo">🚀 Pixel<span>Pilot</span></div>
+<button class="nav active" onclick="showChat()">💬 AI Chat</button>
+<button class="nav" onclick="newChat()">＋ New Chat</button>
+<button class="nav" onclick="showIdeas()">💡 Idea Generator</button>
+<div class="note">YOUR CREATIVE SPACE<br><br>Think bigger. Create smarter.<br>Build your universe.</div>
+</aside>
+<main class="main">
+<header class="topbar">
+<strong>PixelPilot AI Workspace</strong>
+<span class="status">● Interface ready</span>
+</header>
+<section class="content">
+<div class="welcome" id="welcome">
+<div class="spark">✨</div>
+<h1>What will you create today?</h1>
+<p class="subtitle">Welcome to PixelPilot AI. Brainstorm ideas, plan projects, and explore what's possible.</p>
+</div>
+<div class="messages" id="messages" aria-live="polite">
+<div class="msg bot">Hey there! 👋 I'm PixelPilot. Ask me a question, or tell me what you want to build. This demo interface is ready for an AI connection.</div>
+</div>
+<form class="composer" id="chatForm">
+<input id="prompt" placeholder="Message PixelPilot..." autocomplete="off" aria-label="Message PixelPilot" required>
+<button class="send" type="submit">Send ➤</button>
+</form>
+<p class="hint">PixelPilot demo · Connect an AI backend to enable real AI answers.</p>
+</section>
+</main>
+</div>
+<script>
+const messages=document.getElementById('messages');
+const promptBox=document.getElementById('prompt');
+const welcome=document.getElementById('welcome');
+function addMessage(text,who){
+const el=document.createElement('div');
+el.className='msg '+who;
+el.textContent=text;
+messages.appendChild(el);
+el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+document.getElementById('chatForm').addEventListener('submit',function(e){
+e.preventDefault();
+const text=promptBox.value.trim();
+if(!text)return;
+addMessage(text,'user');
+promptBox.value='';
+addMessage("Thanks for your message! The chat interface works, but real AI replies are not connected yet. Connect a secure backend to enable them.",'bot');
+});
+function newChat(){
+messages.innerHTML='';
+welcome.style.display='block';
+addMessage("Hi again! 👋 What would you like to create?",'bot');
+promptBox.focus();
+}
+function showChat(){
+welcome.style.display='block';
+promptBox.placeholder='Message PixelPilot...';
+promptBox.focus();
+}
+function showIdeas(){
+welcome.style.display='block';
+promptBox.value='Give me 5 creative website project ideas';
+promptBox.focus();
+}
+</script>
 </body>
 </html>
